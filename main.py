@@ -5,8 +5,17 @@ def print_board(board):  # Board is represented as a single list
         print("")
 
 
-def has_won(board, shape):  # Check rows, diagonals and columns
-    pass
+def has_won(board, player):  # Check rows, diagonals and columns
+    return (player == board[0] and player == board[1] and player == board[2]) or \
+           (player == board[3] and player == board[4] and player == board[5]) or \
+           (player == board[6] and player == board[7] and player == board[8]) or \
+ \
+           (player == board[0] and player == board[4] and player == board[8]) or \
+           (player == board[2] and player == board[4] and player == board[6]) or \
+ \
+           (player == board[0] and player == board[3] and player == board[6]) or \
+           (player == board[1] and player == board[4] and player == board[7]) or \
+           (player == board[2] and player == board[5] and player == board[8])
 
 
 def possible_moves(board):  # each empty space is a possible move
