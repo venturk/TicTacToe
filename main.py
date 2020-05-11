@@ -1,11 +1,21 @@
 import math
 
 
-def print_board(board):  # Board is represented as a single list
+def print_board_indexed_cells(board):  # Print the board with empty cells filled with their index
     for i in range(3):
         for j in range(3):
-            print(board[3*i + j]+" |", end=' ')
-        print("")
+            cell = board[3*i + j] if board[3*i + j] != ' ' else 3*i+j
+            print("{} |".format(cell), end=' ')
+        print()
+    print()
+
+
+def print_board(board):
+    for i in range(3):
+        for j in range(3):
+            print(board[3 * i + j]+" |", end=' ')
+        print()
+    print()
 
 
 def has_won(board, shape):  # Check rows, diagonals and columns
@@ -21,19 +31,12 @@ def has_won(board, shape):  # Check rows, diagonals and columns
            (shape == board[2] and shape == board[5] and shape == board[8])
 
 
-def possible_moves(board):  # each empty space is a possible move
+def possible_moves(board):  # each empty cell is a possible move
     return [i for i, x in enumerate(board) if x == ' ']
 
 
 def is_board_full(board):  # Board is full if there is no empty space left
     return ' ' not in board
-
-
-# Should check for validity?
-# Or is it already being checked?
-# (Note to self - Make sure you don't make wasteful work)
-def make_move(board, position, shape):
-    pass
 
 
 def minimax(board, is_maximizing):  # The well known AI minimax algorithm
@@ -67,5 +70,63 @@ def minimax(board, is_maximizing):  # The well known AI minimax algorithm
         return best_score
 
 
+def ai_player(board):
+    moves = possible_moves(board)
+    if moves:
+        print("AI's turn... evaluating!")
+        best_score = -math.inf
+        best_move = None
+
+        for pos in moves:
+            board[pos] = 'O'  # Assign current cell as 'O'
+            score = minimax(board, False)  # Evaluate the assignment with the minimax algorithm
+
+            if score > best_score:  # Update best score and best move
+                best_score = score
+                best_move = pos
+
+            board[pos] = ' '  # Clean current cell for next iteration
+
+        board[best_move] = 'O'  # Make the best assignment
+        print("DONE! AI choose to put its shape at {}".format(best_move))
+
+        return True
+    else:
+        return False
+
+
+def human_player(board):
+    moves = possible_moves(board)
+    print("Your turn! Please choose an index: ", *moves)
+    try:
+        move = int(input())
+        if move not in moves:
+            raise ValueError
+
+        board[move] = 'X'
+        return True
+    except (ValueError, IndexError) as e:
+        print("Wrong value! Please try again...")
+        return False
+
+
 if __name__ == "__main__":
-    pass
+    b = [' '] * 9  # Board is represented as a single list
+    current_player = 'O'
+
+    while True:
+        if has_won(b, current_player):
+            print("GAME OVER! {} WON!".format(current_player))
+            break
+
+        if is_board_full(b):
+            print("Well... technically, you didn't lose.")
+            break
+
+        while True:
+            if human_player(b):
+                print_board(b)
+                break
+
+        if ai_player(b):
+            print_board(b)
