@@ -29,12 +29,6 @@ def is_board_full(board):  # Board is full if there is no empty space left
     return ' ' not in board
 
 
-# If board is full AND no player won, there is a TIE...
-# Is there a need for this function...?
-def is_tie(board):
-    pass
-
-
 # Should check for validity?
 # Or is it already being checked?
 # (Note to self - Make sure you don't make wasteful work)
@@ -64,6 +58,7 @@ def minimax(board, is_maximizing):  # The well known AI minimax algorithm
         return best_score
     else:
         best_score = math.inf
+
         for possible_move in possible_moves(board):
             board[possible_move] = 'X'  # Assuming AI is the 'O'
             score = minimax(board, True)
