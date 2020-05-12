@@ -87,12 +87,11 @@ def ai_player(board):
 
             board[pos] = ' '  # Clean current cell for next iteration
 
-        board[best_move] = 'O'  # Make the best assignment
         print("DONE! AI choose to put its shape at {}".format(best_move))
 
-        return True
+        return best_move
     else:
-        return False
+        return None
 
 
 def human_player(board):
@@ -103,11 +102,10 @@ def human_player(board):
         if move not in moves:
             raise ValueError
 
-        board[move] = 'X'
-        return True
+        return move
     except (ValueError, IndexError) as e:
         print("Wrong value! Please try again...")
-        return False
+        return None
 
 
 if __name__ == "__main__":
@@ -123,10 +121,15 @@ if __name__ == "__main__":
             print("Well... technically, you didn't lose.")
             break
 
-        while True:
-            if human_player(b):
-                print_board(b)
-                break
+        move = None
+        while move is None:
+            move = human_player(b)
+        b[move] = 'X'
+        print_board(b)
 
-        if ai_player(b):
-            print_board(b)
+        ai_move = ai_player(b)
+        if ai_move is None:  # Happens only if board is full
+            continue
+
+        b[ai_move] = 'O'
+        print_board(b)
