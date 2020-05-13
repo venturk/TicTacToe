@@ -4,4 +4,4 @@ This is a classic Tic Tac Toe game with an AI Player. The AI player is implement
 Run GUI.py to play "Tic Tac Toe".
 
 # Instructions
-Click the box you want to place your shape in. Currently, you always start first and when the game ends, you need to close the window and re-open it in order to play once again. This will be handled soon, of course.
+Click the box you want to place your shape in. Currently, you always start first and the window closes right after the game ends (i.e - after the AI wins or a TIE).
