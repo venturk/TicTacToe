@@ -1,19 +1,12 @@
 import math
 
 
-def print_board_indexed_cells(board):  # Print the board with empty cells filled with their index
+def print_board(board, indexed=False):
     for i in range(3):
         for j in range(3):
-            cell = board[3*i + j] if board[3*i + j] != ' ' else 3*i+j
+            empty = 3*i + j if indexed else ' '
+            cell = board[3*i + j] if board[3*i + j] != ' ' else empty
             print("{} |".format(cell), end=' ')
-        print()
-    print()
-
-
-def print_board(board):
-    for i in range(3):
-        for j in range(3):
-            print(board[3 * i + j]+" |", end=' ')
         print()
     print()
 
@@ -110,7 +103,7 @@ def human_player(board):
 
 if __name__ == "__main__":
     b = [' '] * 9  # Board is represented as a single list
-    current_player = 'O'
+    current_player = 'X'
 
     while True:
         if has_won(b, current_player):
