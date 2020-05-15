@@ -81,7 +81,7 @@ class Board(object):
         return x, y
 
 
-if __name__ == "__main__":
+def game_flow():
     board = Board()
     player1 = AIPlayer('X', (255, 255, 0))
     player2 = HumanPlayer('O', (0, 0, 255))
@@ -102,3 +102,7 @@ if __name__ == "__main__":
             break
 
         current_player = player2 if current_player is player1 else player1  # Update current player
+
+
+if __name__ == "__main__":
+    game_flow()
