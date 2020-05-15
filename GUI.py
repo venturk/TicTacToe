@@ -1,89 +1,104 @@
-from main import print_board, is_board_full, has_won, ai_player
+from Player import HumanPlayer, AIPlayer, has_won
 import pygame
-import sys
-
-WIDTH = HEIGHT = 300
-CELL_SIZE = WIDTH // 3  # We want 3 cells in each row and each column
 
 
-def draw_grid(window, thickness=5, color=(255, 255, 255)):  # draw a grid of 3x3 on a given pygame display
-    # Horizontal lines
-    pygame.draw.lines(window, color, False, [(0, CELL_SIZE), (WIDTH, CELL_SIZE)], thickness)
-    pygame.draw.lines(window, color, False, [(0, 2 * CELL_SIZE), (WIDTH, 2 * CELL_SIZE)], thickness)
+class Board(object):
+    def __init__(self, cell_size=100):
+        self.board = [' '] * 9
+        self.width = self.height = cell_size * 3
+        self.cell_size = cell_size
 
-    # Vertical lines
-    pygame.draw.lines(window, color, False, [(CELL_SIZE, 0), (CELL_SIZE, WIDTH)], 5)
-    pygame.draw.lines(window, color, False, [(2 * CELL_SIZE, 0), (2 * CELL_SIZE, WIDTH)], thickness)
+        self.display = self.init_display()
+        self.font = pygame.font.SysFont('Arial', self.cell_size // 2)  # Set font
+        self.draw_grid()
 
+    def init_display(self):
+        pygame.init()  # Init pygae
+        pygame.display.set_caption('Tic Tac Toe')  # Set window title
+        display = pygame.display.set_mode((self.width, self.height))
+        display.fill((0, 0, 0))
 
-def get_cell_pos_from_cords(coords):
-    row = col = 2  # Default value is last cell
+        return display
 
-    if coords[1] < CELL_SIZE:        # In 1st row
-        row = 0
-    elif coords[1] < 2 * CELL_SIZE:  # In 2nd row
-        row = 1
+    def empty_cells(self):
+        return [i for i, x in enumerate(self.board) if x == ' ']
 
-    if coords[0] < CELL_SIZE:        # In 1st column
-        col = 0
-    elif coords[0] < 2 * CELL_SIZE:  # In 2nd column
-        col = 1
+    def redraw_board(self):
+        self.display.fill((0, 0, 0))
+        self.draw_grid()
+        self.board = [' '] * 9
 
-    return row, col
+    def draw_grid(self, thic=8, color=(255, 255, 255)):  # draw a grid of 3x3 on a given pygame display
+        # Horizontal lines
+        pygame.draw.lines(self.display, color, False, [(0, self.cell_size), (self.width, self.cell_size)], thic)
+        pygame.draw.lines(self.display, color, False, [(0, 2 * self.cell_size), (self.width, 2 * self.cell_size)], thic)
 
+        # Vertical lines
+        pygame.draw.lines(self.display, color, False, [(self.cell_size, 0), (self.cell_size, self.height)], 5)
+        pygame.draw.lines(self.display, color, False, [(2 * self.cell_size, 0), (2 * self.cell_size, self.height)], thic)
 
-def get_shape_pos(row, col):
-    x, y = CELL_SIZE // 3, CELL_SIZE // 6
+        pygame.display.update()
 
-    x += col * CELL_SIZE
-    y += row * CELL_SIZE
+    def update_board(self, row, col, player):
+        if self.update_cell(row, col, player.shape):  # If update successful, draw shape on board
+            self.draw_shape(row, col, player)
+            return True
 
-    return x, y
+        return False
 
+    def update_cell(self, row, col, shape):
+        if self.board[3 * row + col] == ' ':
+            self.board[3 * row + col] = shape
+            return True
+        return False
 
-def update_board(board, window, player, row, col):
-    # Update board
-    board[3 * row + col] = player
-    print_board(board)
+    def draw_shape(self, row, col, player):
+        x, y = self.get_shape_pos(row, col)
+        self.display.blit(self.font.render(player.shape, True, player.color), (x, y))
+        pygame.display.update()
 
-    # Update GUI
-    x, y = get_shape_pos(row, col)
-    window.blit(font.render(player, True, (255, 0, 0)), (x, y))
-    pygame.display.update()
+    def get_cell_pos_from_cords(self, coords):
+        row = col = 2  # Default value is last cell
+
+        if coords[1] < self.cell_size:        # In 1st row
+            row = 0
+        elif coords[1] < 2 * self.cell_size:  # In 2nd row
+            row = 1
+
+        if coords[0] < self.cell_size:        # In 1st column
+            col = 0
+        elif coords[0] < 2 * self.cell_size:  # In 2nd column
+            col = 1
+
+        return row, col
+
+    def get_shape_pos(self, row, col):
+        x, y = self.cell_size // 3, self.cell_size // 6
+
+        x += col * self.cell_size
+        y += row * self.cell_size
+
+        return x, y
 
 
 if __name__ == "__main__":
-    pygame.init()
-    pygame.display.set_caption('Tic Tac Toe')  # Set window title
-    font = pygame.font.SysFont('Arial', CELL_SIZE // 2)  # Set font
-    display = pygame.display.set_mode((WIDTH, HEIGHT))
-    display.fill((0, 0, 0))
-    draw_grid(display)
+    board = Board()
+    player1 = AIPlayer('X', (255, 255, 0))
+    player2 = HumanPlayer('O', (0, 0, 255))
+    current_player = player1
 
-    board = [' '] * 9
-    game_over = False
+    while True:  # Animation loop (game flow loop)
+        row, column = current_player.play_turn(board)  # Get selected cell's row and col, for current player
+        if row is None:  # No move was selected
+            continue
 
-    while not game_over:  # Animation loop (game flow loop)
-        for event in pygame.event.get():  # for each event
-            if event.type == pygame.QUIT:  # Quit
-                pygame.quit()
-                sys.exit()
+        board.update_board(row, column, current_player)  # Update board with selected cell
+        if has_won(board.board, 3 * row + column):  # Check if last move was a wining move
+            print("{} has won!".format(current_player.shape))
+            break
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button click
-                coordinates = pygame.mouse.get_pos()
-                row, column = get_cell_pos_from_cords(coordinates)
+        if not board.empty_cells():  # Check for a tie
+            print("TIE")
+            break
 
-                if board[3 * row + column] == ' ':  # If spot is unavailable, DO NOTHING
-                    update_board(board, display, 'X', row, column)
-
-                    ai_move = ai_player(board)
-                    if ai_move is not None:  # Happens only if board is full
-                        update_board(board, display, 'O', ai_move // 3, ai_move % 3)
-
-                    if has_won(board, 'O'):
-                        game_over = True
-
-                    if is_board_full(board):
-                        game_over = True
-
-        pygame.display.update()
+        current_player = player2 if current_player is player1 else player1  # Update current player
