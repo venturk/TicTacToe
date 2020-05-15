@@ -1,4 +1,4 @@
-import math
+from GUI import game_flow
 
 
 def print_board(board, indexed=False):
@@ -43,7 +43,7 @@ def minimax(board, is_maximizing):  # The well known AI minimax algorithm
         return 0
 
     if is_maximizing:
-        best_score = -math.inf
+        best_score = -6
 
         for possible_move in possible_moves(board):
             board[possible_move] = 'O'  # Assuming AI is the 'O'
@@ -53,7 +53,7 @@ def minimax(board, is_maximizing):  # The well known AI minimax algorithm
 
         return best_score
     else:
-        best_score = math.inf
+        best_score = 6
 
         for possible_move in possible_moves(board):
             board[possible_move] = 'X'  # Assuming AI is the 'O'
@@ -67,7 +67,7 @@ def ai_player(board):
     moves = possible_moves(board)
     if moves:
         print("AI's turn... evaluating!")
-        best_score = -math.inf
+        best_score = -6
         best_move = None
 
         for pos in moves:
@@ -101,7 +101,7 @@ def human_player(board):
         return None
 
 
-if __name__ == "__main__":
+def cmd_game_flow():
     b = [' '] * 9  # Board is represented as a single list
     current_player = 'X'
 
@@ -126,3 +126,7 @@ if __name__ == "__main__":
 
         b[ai_move] = 'O'
         print_board(b)
+
+
+if __name__ == "__main__":
+    game_flow()
