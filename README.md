@@ -1,6 +1,8 @@
 # TicTacToe-GUI-AI-Game
 This is a classic Tic Tac Toe game with an **AI Player**. The AI player is implemented using the well known **minimax algorithm** from game theory. It includes a **GUI**, as well as a text based version.
 
+![Image of Tic Tac Toe Game Play](https://raw.githubusercontent.com/venturk/TicTacToe/master/Tic%20Tac%20Toe%20-%20Game%20Play.png)
+
 # Instructions
 Run main.py to play "Tic Tac Toe". If you prefer to check out the CMD version, just run main with the cmd_game_flow() function instead.
 
